@@ -1,27 +1,36 @@
-/* Native snapping preserves keyboard, touch and scrolling inside tall sections.
-   styles.css supplies the sticky header offset through scroll-padding-top. */
-html {
-  scroll-snap-type: y proximity;
-}
-
-main > section {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}
-
-/* Keep the final section and footer reachable at the bottom of the document. */
-footer {
-  scroll-snap-align: end;
-}
-
+/* One viewport per section; touch devices retain natural document scrolling. */
 @media (min-width: 681px) and (hover: hover) and (pointer: fine) {
-  html {
-    scroll-snap-type: y mandatory;
-  }
+ html, body { height:100%; overflow:hidden; scroll-behavior:auto; }
+ .header { position:relative; height:94px; }
+ #main { height:calc(100dvh - 94px); overflow:hidden; position:relative; scroll-behavior:auto; }
+ #main > section { height:100%; min-height:0; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scroll-margin:0; padding-top:clamp(24px,5vh,64px); padding-bottom:clamp(24px,5vh,64px); }
+ #main > .ticker { display:none; }
+ #main > .hero { display:flex; flex-direction:column; padding-top:20px; padding-bottom:0; }
+ .hero-top,.hero-rail { flex-shrink:0; }
+ .hero-content { width:100%; margin:auto; padding:24px 0; }
+ .hero h1 { font-size:clamp(76px,min(14vw,24vh),210px); margin:20px 0 28px; }
+ .hero h2 { font-size:clamp(22px,3vh,30px); }
+ .hero-bottom > div { gap:30px; }
+ .hero-rail { margin-top:auto; }
+ .about,.vehicle,.journal { display:flex; flex-direction:column; }
+ .about-layout { margin:auto 0; padding:28px 0; }
+ .principles { margin-top:auto; }
+ .section-heading { margin:25px 0; }
+ .vehicle-board { flex:1; min-height:min-content; }
+ .project-cover { min-height:280px; }
+ .project-cover strong { font-size:clamp(64px,12vh,110px); }
+ .project-info { padding:25px 35px; }
+ .project-info h3 { margin:16px 0 12px; }
+ .project-info dl { margin-top:18px; }
+ .journal-empty { margin:auto 0; padding:50px 0; }
+ #main > .join { display:flex; flex-direction:column; padding-bottom:0; }
+ .join-inner { width:100%; margin:auto; padding-bottom:32px; }
+ .join h2 { font-size:clamp(34px,7vh,65px); }
+ .join footer { flex-shrink:0; margin:0 min(-5vw,-24px); padding-top:24px; padding-bottom:24px; }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-snap-type: none;
-  }
+@media (max-width:680px), (hover:none), (pointer:coarse) {
+ .join footer { margin:40px min(-5vw,-24px) -45px; }
+}
+@media (min-width:1550px) {
+ .join footer { margin-left:calc((1280px - 100vw)/2); margin-right:calc((1280px - 100vw)/2); }
 }
