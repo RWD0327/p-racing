@@ -19,7 +19,7 @@ window.matchMedia('(min-width: 681px)').addEventListener('change', closeMenu);
 document.querySelector('#year').textContent = new Date().getFullYear();
 
 // One continuous wheel gesture moves exactly one full-screen section.
-const desktop = matchMedia('(min-width: 681px) and (hover: hover) and (pointer: fine)');
+const fullpage = matchMedia('all');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const main = document.querySelector('#main');
 const panels = [...main.querySelectorAll(':scope > section')];
@@ -49,7 +49,7 @@ function showPanel(index, animate = true) {
   animation = requestAnimationFrame(frame);
 }
 main.addEventListener('wheel', event => {
-  if (!desktop.matches || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return;
+  if (!fullpage.matches || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return;
   clearTimeout(gestureTimer);
   gestureTimer = setTimeout(() => { gestureUsed = false; wheelTotal = 0; }, 180);
   if (moving || gestureUsed) { event.preventDefault(); return; }
@@ -68,7 +68,7 @@ main.addEventListener('wheel', event => {
 }, { passive: false });
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', event => {
-    if (!desktop.matches) return;
+    if (!fullpage.matches) return;
     const target = link.getAttribute('href').slice(1);
     const index = target === 'main' ? 0 : panels.findIndex(panel => panel.id === target);
     if (index < 0) return;
@@ -80,7 +80,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
   });
 });
 document.addEventListener('keydown', event => {
-  if (!desktop.matches || event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+  if (!fullpage.matches || event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
   if (event.target.closest('button, input, textarea, select, a, [contenteditable="true"]')) return;
   const direction = ['ArrowDown', 'PageDown'].includes(event.key) || (event.key === ' ' && !event.shiftKey) ? 1
     : ['ArrowUp', 'PageUp'].includes(event.key) || (event.key === ' ' && event.shiftKey) ? -1 : 0;
@@ -95,21 +95,56 @@ document.addEventListener('keydown', event => {
   showPanel(event.key === 'Home' ? 0 : event.key === 'End' ? panels.length - 1 : activePanel + direction);
 });
 function alignPanel() {
-  if (desktop.matches) showPanel(activePanel, false);
+  if (fullpage.matches) showPanel(activePanel, false);
   else { cancelAnimationFrame(animation); moving = false; main.scrollTop = 0; }
 }
 window.addEventListener('resize', alignPanel);
 main.addEventListener('focusin', event => {
-  if (!desktop.matches) return;
+  if (!fullpage.matches) return;
   const index = panels.findIndex(panel => panel.contains(event.target));
   if (index >= 0 && index !== activePanel) showPanel(index, false);
 });
-desktop.addEventListener('change', alignPanel);
+fullpage.addEventListener('change', alignPanel);
 window.addEventListener('hashchange', () => {
   const index = panels.findIndex(panel => `#${panel.id}` === location.hash);
-  if (index >= 0 && desktop.matches) showPanel(index);
+  if (index >= 0 && fullpage.matches) showPanel(index);
 });
 const initialPanel = panels.findIndex(panel => `#${panel.id}` === location.hash);
 if (initialPanel >= 0) activePanel = initialPanel;
 alignPanel();
 document.fonts.ready.then(alignPanel);
+
+
+// Decide at the start of each swipe whether to read overflow or change panels.
+// A swipe that starts within long content never jumps panels halfway through.
+let swipe = null;
+main.addEventListener('touchstart', event => {
+  if (event.touches.length !== 1 || moving) { swipe = null; return; }
+  const touch = event.touches[0];
+  const panel = panels[activePanel];
+  swipe = {
+    x: touch.clientX, y: touch.clientY, used: false, mode: null,
+    canUp: panel.scrollTop > 2,
+    canDown: panel.scrollTop + panel.clientHeight < panel.scrollHeight - 2
+  };
+}, { passive: true });
+main.addEventListener('touchmove', event => {
+  if (event.touches.length !== 1) { swipe = null; return; }
+  if (moving || swipe?.used) { if (event.cancelable) event.preventDefault(); return; }
+  if (!swipe) return;
+  const dx = event.touches[0].clientX - swipe.x;
+  const dy = swipe.y - event.touches[0].clientY;
+  if (!swipe.mode) {
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 8) return;
+    swipe.mode = Math.abs(dx) > Math.abs(dy) ? 'horizontal'
+      : (dy > 0 ? swipe.canDown : swipe.canUp) ? 'content' : 'panel';
+  }
+  if (swipe.mode !== 'panel') return;
+  if (event.cancelable) event.preventDefault();
+  if (Math.abs(dy) < 40) return;
+  swipe.used = true;
+  showPanel(activePanel + Math.sign(dy));
+}, { passive: false });
+main.addEventListener('touchend', () => { swipe = null; }, { passive: true });
+main.addEventListener('touchcancel', () => { swipe = null; }, { passive: true });
+window.visualViewport?.addEventListener('resize', alignPanel);

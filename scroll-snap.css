@@ -1,5 +1,5 @@
-/* One viewport per section; touch devices retain natural document scrolling. */
-@media (min-width: 681px) and (hover: hover) and (pointer: fine) {
+/* One viewport per section on desktop and mobile. */
+@media all {
  html, body { height:100%; overflow:hidden; scroll-behavior:auto; }
  .header { position:relative; height:94px; }
  #main { height:calc(100dvh - 94px); overflow:hidden; position:relative; scroll-behavior:auto; }
@@ -34,3 +34,44 @@
 @media (min-width:1550px) {
  .join footer { margin-left:calc((1280px - 100vw)/2); margin-right:calc((1280px - 100vw)/2); }
 }
+
+/* Fit mobile panels to the visible viewport, including browser chrome changes. */
+@media (max-width:680px) {
+ .header { height:76px; }
+ #main { height:calc(100vh - 76px); height:calc(100dvh - 76px); }
+ #main > section { padding:20px 24px; }
+ #main > .hero { padding-top:14px; }
+ .hero-content { padding:14px 0; }
+ .hero h1 { font-size:clamp(70px,min(21vw,19dvh),130px); margin:20px 0; }
+ .hero h2 { font-size:23px; }
+ .hero-bottom p { margin-top:12px; }
+ .hero-bottom .button { margin-top:18px; }
+ .hero-rail { padding:14px 0; }
+ .section-label { padding-bottom:12px; }
+ .about-layout { gap:14px; padding:18px 0; }
+ .about h2,.section-heading h2 { font-size:25px; }
+ .about-copy { font-size:14px; }
+ .about-copy p + p { margin-top:10px; }
+ .principles article,.principles article + article { padding:12px 0; }
+ .principles .number { display:none; }
+ .principles h3 { margin:0 0 6px; font-size:25px; }
+ .principles p { font-size:13px; }
+ .section-heading { margin:18px 0; }
+ .section-heading > p { margin-top:5px; }
+ .vehicle-board { flex:0 0 auto; }
+ .project-cover { min-height:135px; padding:16px 20px; }
+ .project-cover strong { font-size:clamp(38px,7dvh,56px); margin:10px 0; }
+ .project-cover strong br { display:none; }
+ .cover-bottom { font-size:11px; }
+ .project-info { padding:18px 20px; }
+ .project-info h3 { font-size:21px; margin:12px 0 8px; }
+ .project-info h3 br { display:none; }
+ .project-info dl { margin-top:12px; }
+ .project-info dl div { padding:6px 0; }
+ .journal-empty { padding:28px 0; }
+ .join-inner { padding:12px 0 24px; }
+ .join h2 { font-size:clamp(30px,5dvh,40px); margin:20px 0; }
+ .join-notice { margin-top:18px; }
+ .join footer { margin:0 -24px; padding:20px 24px max(20px,env(safe-area-inset-bottom)); }
+}
+#main > section > * { flex-shrink:0; }
