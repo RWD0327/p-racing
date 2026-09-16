@@ -1,0 +1,27 @@
+/* Native snapping preserves keyboard, touch and scrolling inside tall sections.
+   styles.css supplies the sticky header offset through scroll-padding-top. */
+html {
+  scroll-snap-type: y proximity;
+}
+
+main > section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Keep the final section and footer reachable at the bottom of the document. */
+footer {
+  scroll-snap-align: end;
+}
+
+@media (min-width: 681px) and (hover: hover) and (pointer: fine) {
+  html {
+    scroll-snap-type: y mandatory;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-snap-type: none;
+  }
+}

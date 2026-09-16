@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
-const routes = { '/': ['index.html', 'text/html'], '/index.html': ['index.html', 'text/html'], '/styles.css': ['styles.css', 'text/css'], '/app.js': ['app.js', 'text/javascript'] };
+const routes = { '/': ['index.html', 'text/html'], '/index.html': ['index.html', 'text/html'], '/styles.css': ['styles.css', 'text/css'], '/scroll-snap.css': ['scroll-snap.css', 'text/css'], '/app.js': ['app.js', 'text/javascript'] };
 createServer(async (req, res) => {
   const route = routes[new URL(req.url, 'http://localhost').pathname];
   if (!route) { res.writeHead(404); res.end('Not found'); return; }

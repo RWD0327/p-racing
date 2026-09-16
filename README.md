@@ -10,6 +10,7 @@ Node.js 설치 환경에서 `node server.mjs` 실행 후 http://127.0.0.1:4173 �
 
 - `dist/index.html`: 팀 소개, 차량, 활동 기록, 모집 안내
 - `dist/styles.css`: 디자인과 반응형 레이아웃. `:root`에서 색상 변경
+- `dist/scroll-snap.css`: 섹션 단위 스크롤 스냅. 데스크톱 마우스는 mandatory, 터치는 proximity를 사용하며 모션 감소 설정에서는 비활성화합니다. 한 번의 휠 입력을 강제로 가로채지 않고 브라우저의 기본 스크롤을 사용합니다.
 - `dist/app.js`: 모바일 메뉴와 연도 표시
 - `dist/`: 정적 호스팅에 올릴 전체 파일
 
