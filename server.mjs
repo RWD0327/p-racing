@@ -1,0 +1,12 @@
+import { createServer } from 'node:http';
+import { readFile } from 'node:fs/promises';
+const routes = { '/': ['index.html', 'text/html'], '/index.html': ['index.html', 'text/html'], '/styles.css': ['styles.css', 'text/css'], '/app.js': ['app.js', 'text/javascript'] };
+createServer(async (req, res) => {
+  const route = routes[new URL(req.url, 'http://localhost').pathname];
+  if (!route) { res.writeHead(404); res.end('Not found'); return; }
+  try {
+    const data = await readFile(new URL(`./dist/${route[0]}`, import.meta.url));
+    res.writeHead(200, { 'Content-Type': `${route[1]}; charset=utf-8` });
+    res.end(data);
+  } catch { res.writeHead(500); res.end('Unable to load page'); }
+}).listen(4173, '127.0.0.1', () => console.log('Local: http://127.0.0.1:4173'));
