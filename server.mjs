@@ -2,7 +2,18 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 const routes = { '/': ['index.html', 'text/html'], '/index.html': ['index.html', 'text/html'], '/styles.css': ['styles.css', 'text/css'], '/scroll-snap.css': ['scroll-snap.css', 'text/css'], '/app.js': ['app.js', 'text/javascript'] };
 createServer(async (req, res) => {
-  const route = routes[new URL(req.url, 'http://localhost').pathname];
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('X-Frame-Options', 'DENY');
+  let pathname;
+  try {
+    pathname = new URL(req.url, 'http://localhost').pathname;
+  } catch {
+    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('Bad request');
+    return;
+  }
+  const route = Object.hasOwn(routes, pathname) ? routes[pathname] : undefined;
   if (!route) { res.writeHead(404); res.end('Not found'); return; }
   try {
     const data = await readFile(new URL(`./dist/${route[0]}`, import.meta.url));
