@@ -2,6 +2,22 @@
 
 평택대학교 자작자동차 동아리 소개용 반응형 정적 웹사이트 기본 틀입니다.
 
+## 공개 사이트
+
+- 웹사이트: https://rwd0327.github.io/p-racing/
+- GitHub: https://github.com/RWD0327/p-racing
+
+GitHub Pages는 `gh-pages` 브랜치의 루트를 배포합니다. `main`에는 편집용 소스가 있고, `gh-pages`에는 `dist` 안의 공개 파일만 있습니다.
+
+수정 후 아래 순서로 반영합니다.
+
+```powershell
+git add dist README.md
+git commit -m "Update website"
+git push origin main
+git subtree push --prefix=dist origin gh-pages
+```
+
 ## 실행
 
 Node.js 설치 환경에서 `node server.mjs` 실행 후 http://127.0.0.1:4173 에 접속합니다. npm이 있으면 `npm run dev`로도 실행할 수 있습니다. 패키지 설치는 필요하지 않습니다. `dist/index.html`을 직접 열어도 볼 수 있습니다.
