@@ -9,6 +9,12 @@ menuButton.addEventListener('click', () => {
   menuButton.setAttribute('aria-expanded', String(isOpen));
 });
 navigation.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+document.addEventListener('click', event => {
+  if (!navigation.contains(event.target) && !menuButton.contains(event.target)) closeMenu();
+});
+document.addEventListener('focusin', event => {
+  if (!navigation.contains(event.target) && !menuButton.contains(event.target)) closeMenu();
+});
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && navigation.classList.contains('is-open')) {
     closeMenu();
@@ -28,10 +34,16 @@ let moving = false;
 let gestureUsed = false;
 let wheelTotal = 0;
 let gestureTimer;
+let wheelReadingContent = false;
 let animation;
 function showPanel(index, animate = true) {
   const previousPanel = activePanel;
   activePanel = Math.max(0, Math.min(panels.length - 1, index));
+  navigation.querySelectorAll('a').forEach(link => {
+    if (link.getAttribute('href') === `#${panels[activePanel].id}`) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  });
+  if (previousPanel !== activePanel) history.replaceState(null, '', `#${panels[activePanel].id}`);
   if (previousPanel !== activePanel) panels[activePanel].scrollTop = 0;
   cancelAnimationFrame(animation);
   const start = main.scrollTop;
@@ -51,13 +63,15 @@ function showPanel(index, animate = true) {
 main.addEventListener('wheel', event => {
   if (!fullpage.matches || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return;
   clearTimeout(gestureTimer);
-  gestureTimer = setTimeout(() => { gestureUsed = false; wheelTotal = 0; }, 180);
+  gestureTimer = setTimeout(() => { gestureUsed = false; wheelTotal = 0; wheelReadingContent = false; }, 180);
   if (moving || gestureUsed) { event.preventDefault(); return; }
   const panel = panels[activePanel];
   const direction = Math.sign(event.deltaY);
   const hasMoreContent = direction > 0 ? panel.scrollTop + panel.clientHeight < panel.scrollHeight - 2 : panel.scrollTop > 2;
   // Preserve access to overflowing content at short heights or high text zoom.
-  if (hasMoreContent) { wheelTotal = 0; return; }
+  if (hasMoreContent) { wheelTotal = 0; wheelReadingContent = true; return; }
+  // Finish the current reading gesture before allowing a new panel transition.
+  if (wheelReadingContent) { event.preventDefault(); return; }
   event.preventDefault();
   const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? main.clientHeight : 1);
   if (Math.sign(wheelTotal) !== direction) wheelTotal = 0;
@@ -81,7 +95,8 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 });
 document.addEventListener('keydown', event => {
   if (!fullpage.matches || event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
-  if (event.target.closest('button, input, textarea, select, a, [contenteditable="true"]')) return;
+  if (event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+  if (event.key === ' ' && event.target.closest('button, a')) return;
   const direction = ['ArrowDown', 'PageDown'].includes(event.key) || (event.key === ' ' && !event.shiftKey) ? 1
     : ['ArrowUp', 'PageUp'].includes(event.key) || (event.key === ' ' && event.shiftKey) ? -1 : 0;
   if (!direction && !['Home', 'End'].includes(event.key)) return;
@@ -111,6 +126,7 @@ window.addEventListener('hashchange', () => {
 });
 const initialPanel = panels.findIndex(panel => `#${panel.id}` === location.hash);
 if (initialPanel >= 0) activePanel = initialPanel;
+document.documentElement.classList.add('fullpage');
 alignPanel();
 document.fonts.ready.then(alignPanel);
 

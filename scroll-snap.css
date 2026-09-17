@@ -75,3 +75,19 @@
  .join footer { margin:0 -24px; padding:20px 24px max(20px,env(safe-area-inset-bottom)); }
 }
 #main > section > * { flex-shrink:0; }
+/* Keep content readable if scripting is disabled or fails before initialization. */
+html:not(.fullpage), html:not(.fullpage) body { height:auto; overflow:visible; }
+html:not(.fullpage) #main { height:auto; overflow:visible; }
+html:not(.fullpage) #main > section { height:auto; overflow:visible; }
+html:not(.fullpage) .hero-content { margin:24px auto; }
+.header nav a[aria-current="location"] { color:#00794e; text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:8px; }
+#navigation { max-height:calc(100dvh - 76px); overflow-y:auto; overscroll-behavior:contain; }
+@media (max-width:680px) {
+ .menu-toggle { min-height:44px; }
+ .header nav a { min-height:48px; }
+}
+@media print {
+ html, body, #main { height:auto!important; overflow:visible!important; }
+ #main > section { height:auto!important; overflow:visible!important; break-inside:avoid; }
+ .header, .skip, .hero-rail { display:none!important; }
+}
