@@ -48,6 +48,14 @@ Google Fonts를 불러오며 연결되지 않을 때 시스템 글꼴로 표시�
 
 ## 보안 설정
 
+## 기기별 화면 검사
+
+`tests/responsive.cjs`는 Playwright와 Edge가 있는 환경에서 실행하는 선택적 브라우저 검사입니다. 로컬 서버를 먼저 실행한 뒤 `node tests/responsive.cjs`를 실행합니다. Playwright가 다른 위치에 설치돼 있다면 `PLAYWRIGHT_MODULE`에 해당 모듈 경로를 지정할 수 있습니다. `BROWSER_CHANNEL` 기본값은 `msedge`, `TEST_URL` 기본값은 로컬 미리보기 주소입니다. 일반 사이트 실행에는 Playwright가 필요하지 않습니다.
+
+320×568부터 1920×1080까지 11개 뷰포트에서 패널 크기·가로 넘침·지원 버튼·콘솔 오류를 검사하고, 터치 및 휠 전환을 확인합니다. 실물 iOS/Android 검사를 대체하지 않습니다. 작은 화면에서 긴 내용은 축소하거나 숨기지 않고 섹션 내부에서 스크롤합니다.
+
+## 보안 정책 상세
+
 - HTML의 CSP는 같은 출처 스크립트와 CSS, Google Fonts CSS·폰트만 허용합니다. 인라인 스크립트, 플러그인, iframe, 폼 전송과 fetch 연결은 허용하지 않습니다. 외부 Google Forms 지원 링크의 새 탭 이동은 유지됩니다.
 - `no-referrer` 정책으로 외부 리소스와 링크에 현재 페이지 주소를 보내지 않습니다.
 - 로컬 미리보기는 loopback에서만 실행하고, 잘못된 URL은 400으로 반환합니다. 공개 파일 외 경로는 404 처리합니다.
