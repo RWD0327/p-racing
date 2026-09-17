@@ -2,6 +2,10 @@
 
 평택대학교 자작자동차 동아리 소개용 반응형 정적 웹사이트 기본 틀입니다.
 
+## 다른 AI에서 이어서 작업하기
+
+먼저 [AGENTS.md](AGENTS.md)의 작업 지침, [PROJECT_STATUS.md](PROJECT_STATUS.md)의 현재 상태, [WORK_LOG.md](WORK_LOG.md)의 진행 기록을 읽으세요. 작업 시작·주요 완료 단계·중단·종료 때마다 상태와 검증 결과를 갱신합니다. 특정 AI 서비스 없이 일반 Markdown으로 사용할 수 있습니다.
+
 ## 공개 사이트
 
 - 웹사이트: https://rwd0327.github.io/p-racing/
