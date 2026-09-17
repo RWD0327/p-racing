@@ -91,3 +91,20 @@ html:not(.fullpage) .hero-content { margin:24px auto; }
  #main > section { height:auto!important; overflow:visible!important; break-inside:avoid; }
  .header, .skip, .hero-rail { display:none!important; }
 }
+/* Recruitment CTA: high contrast against the university green. */
+.apply-card { width:min(100%,380px); flex-shrink:0; }
+.apply-label { display:block; font-size:12px; font-weight:700; letter-spacing:1.8px; margin-bottom:12px; }
+.apply-button { display:flex; align-items:center; justify-content:space-between; gap:24px; min-height:76px; padding:18px 22px; background:var(--ink); color:white; border:1px solid var(--ink); font-size:19px; font-weight:700; transition:background .2s,transform .2s; }
+.apply-arrow { display:grid; place-items:center; width:36px; height:36px; border:1px solid #64766b; font-size:24px; transition:transform .2s; }
+.apply-button:hover { background:#063a28; transform:translateY(-2px); }
+.apply-button:hover .apply-arrow { transform:translate(2px,-2px); }
+.apply-button:focus-visible { outline:3px solid white; outline-offset:5px; }
+.join-bottom .apply-card p { margin-top:12px; font-size:12px; line-height:1.7; color:#082d1d; }
+@media(max-width:680px) {
+ .apply-card { width:100%; margin-top:26px; }
+ .apply-button { min-height:68px; font-size:18px; padding:15px 18px; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .apply-button,.apply-arrow { transition:none; }
+ .apply-button:hover,.apply-button:hover .apply-arrow { transform:none; }
+}
